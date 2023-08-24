@@ -2,9 +2,9 @@ const mysql = require('mysql2');
 
 function createConnection() {
   const connection = mysql.createConnection({
-    host: 'db-mysql-nyc1-34916-do-user-14456800-0.b.db.ondigitalocean.com',
-    user: 'tpc98',
-    password: 'AVNS_LJsJZyFu7aEv4QmdhQS',
+    host: 'gasunion-database-do-user-14562319-0.b.db.ondigitalocean.com',
+    user: 'doadmin',
+    password: 'AVNS_EpXeOpmQDAMrNDn3jnL',
     database: 'gasunion',
     port: 25060
     
