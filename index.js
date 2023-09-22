@@ -73,8 +73,8 @@ app.post('/login', (req, res) => { //DESDE HTML EJECUTAMOS EL POST CON NOMBRE /l
   const query = 'SELECT * FROM usuarios WHERE username = ? AND password = ? AND status = ?'; //QUERY PARA OBTENER SI EXISTE UN USUARIO CON ESE USERNAME Y PASSWORD Y QUE ADEMAS ESTE ACTIVO
   connection.query(query, [username, password,'ACTIVO'], (error, results) => { //PASAMOS LOS PARAMETROS AL QUERY Y OBTENEMOS EL RESULTADO O EL ERROR
     if (error) {
-      console.error('Error en la consulta:', error); //NOS MUESTRA EN LA CONSOLA SI ES QUE XISTE ALGUN ERROR EN EL QUERY
       res.redirect('/'); //SI EXISTE UN ERROR NOS REDIRECCIONA A LA PAGINA PRINCIPAL QUE ES EL LOGIN
+      throw error; //NOS MUESTRA EN LA CONSOLA SI ES QUE XISTE ALGUN ERROR EN EL QUERY
     } else if (results.length === 1) {//VALIDAMOS SI ENCONTRO UN DATO EN EL QUERY
       const rol = results[0].rol;
       req.session.datos = { //GUUARDAMOS EN EL OBJETO DATOS TODO LO QUE TRAIGAMOS DEL USUARIO EN EL QUERY
@@ -113,7 +113,7 @@ app.post('/login', (req, res) => { //DESDE HTML EJECUTAMOS EL POST CON NOMBRE /l
 app.get('/logout', (req, res) => {
   req.session.destroy((error) => {
     if (error) {
-      console.error('Error al cerrar sesión:', error);
+      throw error;
     }
     console.log('Sesion cerrada')
     res.redirect('/');
