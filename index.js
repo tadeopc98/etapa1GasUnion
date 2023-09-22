@@ -127,7 +127,7 @@ app.get('/administracion',verificarSesion, (req, res) => {
     if(error){
         throw error;
     } else {
-      connection.query('SELECT COUNT(*) as total FROM clientes',(error, results2)=>{
+      connection.query('SELECT (SELECT COUNT(*) FROM clientesSuministro) + (SELECT COUNT(*) FROM clientesAdministracion) AS total',(error, results2)=>{
         if(error){
             throw error;
         } else {
