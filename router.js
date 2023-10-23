@@ -51,7 +51,9 @@ router.post('/saveClientSuministro', crud.saveClientSuministro);
 router.post('/updateSuministro', crud.updateSuministro);
 router.post('/saveClientAdministracion',crud.saveClientAdministracion)
 router.post('/updateAdministracion', crud.updateAdministracion);
-
+router.post('/saveUnidad', crud.saveUnidad);
+router.post('/startUnity', crud.startUnity);
+router.post('/closeUnity', crud.closeUnity);
 
 
 module.exports = router;

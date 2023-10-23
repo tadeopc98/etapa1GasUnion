@@ -248,5 +248,110 @@ exports.updateAdministracion = (req, res)=>{
 };
 
 
+exports.saveUnidad = (req, res)=>{
+    const noEco = req.body.noEco;
+    const placas = req.body.placas;
+    const segVigente = req.body.segVig;
+    const disel = req.body.disel;
+    const gasLp = req.body.gasLp;
+    const usuarioRegistra = req.body.usuarioRegistra;
+    const statusUnidad = 'ACTIVO';
+    const statusServicio = 'CERRADO';
+    
+    connection.query('SELECT COUNT(*) AS count FROM unidades WHERE noEco = ?',[noEco], (error, countResult)=>{
+        if(error){
+            console.log(error);
+        }else{
+            const existingCount = countResult[0].count;
+            if (existingCount === 0)
+            {
+                connection.query('INSERT INTO unidades SET ?',{noEco:noEco,placas:placas,segVigente:segVigente,disel:disel,gasLp:gasLp,usuarioRegistra:usuarioRegistra,statusUnidad,statusUnidad,statusServicio:statusServicio}, (error, results)=>{
+                    if(error){
+                        console.log(error);
+                    }else{
+                        
+                        res.redirect('/viewUnidades');
+                               
+                    }
+            });   
+            }
+            else{
+                
+                res.redirect('/addUnidad');
+            
+            }
+               
+        }
+});
+};
 
 
+exports.startUnity = (req, res)=>{
+    const noEco = req.body.noEco;
+    const porcentajeLp = req.body.porcentajeLp;
+    const porcentajeDisel = req.body.porcentajeDisel;
+    const operador = req.body.operador;
+    const tripulante1 = req.body.tripulante1;
+    const tripulante2 = req.body.tripulante2;
+    const fechaInicio = req.body.fechaInicio;
+    const horaIncio = req.body.horaInicio;
+    const usuarioInicio = req.body.usuarioInicia;
+    
+    
+    connection.query('INSERT INTO inicioUnidad SET ?',{noEco:noEco,porcentajeLp:porcentajeLp,porcentajeDisel:porcentajeDisel,operador:operador,tripulante1:tripulante1,
+                                                        tripulante2:tripulante2,fechaInicio:fechaInicio,horaInicio:horaIncio,usuarioInicio:usuarioInicio}, (error, results)=>{
+         if(error){
+            console.log(error);
+        }else{             
+
+            connection.query('UPDATE unidades SET ? WHERE noEco = ?',[{statusServicio:'INICIADO'},noEco], (error, results)=>{
+         if(error){
+            console.log(error);
+        }else{             
+            
+            res.redirect('/viewUnidadesServicios');                    
+        }
+     });                   
+     }
+     });   
+            
+
+};
+
+exports.closeUnity = (req, res)=>{
+    const noEco = req.body.noEco;
+    const porcentajeLp = req.body.porcentajeLp;
+    const porcentajeDisel = req.body.porcentajeDisel;
+    const noServicios = req.body.noServicios;
+    const ltVentaMedidor = req.body.ltVentaMedidor;
+    const ltVentaNotas = req.body.ltVentaNotas;
+    const ventaDif = req.body.ventaDif;
+    const cancelados = req.body.cancelados;
+    const efectivo = req.body.efectivo;
+    const gastos = req.body.gastos;
+    const granTotal = req.body.granTotal;
+    const usuarioCierra = req.body.usuarioCierra;
+    const fechaCierre = req.body.fechaCierre;
+    const horaCierre = req.body.horaCierre;
+
+    
+    connection.query('INSERT INTO cierreUnidad SET ?',{noEco:noEco,porcentajeLp:porcentajeLp,porcentajeDisel:porcentajeDisel,noServicios:noServicios,ltVentaMedidor:ltVentaMedidor,
+                                                        ltVentaNotas:ltVentaNotas,ventaDif:ventaDif,cancelados:cancelados,efectivo:efectivo,gastos:gastos,granTotal:granTotal,
+                                                        fechaCierre:fechaCierre,horaCierre:horaCierre,usuarioCierra:usuarioCierra}, (error, results)=>{
+         if(error){
+            console.log(error);
+        }else{             
+
+            connection.query('UPDATE unidades SET ? WHERE noEco = ?',[{statusServicio:'CERRADO'},noEco], (error, results)=>{
+         if(error){
+            console.log(error);
+        }else{             
+            
+            res.redirect('/viewUnidadesServicios');                    
+        }
+     });                   
+     }
+     });   
+            
+
+};

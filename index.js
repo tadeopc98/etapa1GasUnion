@@ -403,7 +403,266 @@ app.get('/createClientSuministro', (req,res)=>{
   
 });
 
+app.get('/addUnidad', (req,res)=>{
+  
+  const datos = req.session.datos;
+  res.render('addUnidad',{datos});
+          
+});
 
+app.get('/viewUnidades',verificarSesion, (req, res)=>{     
+  connection.query('SELECT * FROM unidades ',(error, results)=>{
+      if(error){
+          throw error;
+      } else {
+              const datos = req.session.datos;                     
+              res.render('viewUnidades', {results:results,datos});  
+        
+                  
+      }   
+  })
+});
+
+app.get('/viewUnidadesServicios',verificarSesion, (req, res)=>{     
+  connection.query('SELECT * FROM unidades WHERE statusServicio = ? AND statusUnidad = ?',['CERRADO','ACTIVO'],(error, results)=>{
+      if(error){
+          throw error;
+      } else {
+        connection.query('SELECT * FROM unidades WHERE statusServicio = ? AND statusUnidad = ?',['INICIADO','ACTIVO'],(error, results2)=>{
+          if(error){
+              throw error;
+          } else {
+            
+            const datos = req.session.datos;                     
+            res.render('viewUnidadesServicios', {results:results,results2:results2,datos});  
+            
+                      
+          }   
+      })
+      }   
+  })
+});
+
+app.get('/startUnidad/:id', (req, res) => {
+  const id = req.params.id;
+  connection.query('SELECT * FROM unidades WHERE noEco= ?', [id], (error, results) => {
+    if (error) {
+      throw error;
+    } else {
+        const datos = req.session.datos;
+        
+        res.render('startUnidad', { unidad: results[0],datos });
+     
+     
+    }
+  });
+});
+
+app.get('/closeUnidad/:id', (req, res) => {
+  const id = req.params.id;
+  connection.query('SELECT * FROM unidades WHERE noEco= ?', [id], (error, results) => {
+    if (error) {
+      throw error;
+    } else {
+        const datos = req.session.datos;
+        
+        res.render('closeUnidad', { unidad: results[0],datos });
+     
+     
+    }
+  });
+});
+
+app.get('/servicios',verificarSesion, (req, res)=>{     
+  connection.query('SELECT a.*,b.* FROM clientesAdministracion a, bloques b WHERE a.bloque = b.nombreBloque AND a.bloque = ? AND a.noCliente NOT IN (SELECT noCliente FROM serviciosAsignadosAdmin WHERE statusServicio = ?) ORDER BY a.municipio,a.cp',['BLOQUE 4','PENDIENTE'],(error, results)=>{
+      if(error){
+          throw error;
+      } else {
+        connection.query('SELECT * FROM unidades WHERE statusServicio = ?',['INICIADO'],(error, results2)=>{
+          if(error){
+              throw error;
+          } else {
+            connection.query('SELECT * FROM clientesSuministro WHERE  proximaCarga IS NOT NULL AND noCliente NOT IN(SELECT noCliente FROM serviciosAsignadosSuministro WHERE statusServicio = ?) ORDER BY municipio,cp',['PENDIENTE'],(error, results3)=>{
+              if(error){
+                  throw error;
+              } else {
+                      const unidades = results2.map(row => row.noEco ); 
+                      const datos = req.session.datos;                     
+                      res.render('servicios', {results:results,results3:results3,unidades,datos});  
+                
+                          
+              }   
+          })
+            
+                      
+          }   
+      })
+        
+                  
+      }   
+  })
+});
+
+app.get('/prepSum',verificarSesion, (req, res)=>{     
+  
+            connection.query('SELECT * FROM clientesSuministro  ORDER BY municipio,cp,ultimaCarga',(error, results)=>{
+              if(error){
+                  throw error;
+              } else {
+                      
+                      const datos = req.session.datos;                     
+                      res.render('prepSum', {results:results,datos});  
+                
+                          
+              }   
+          })
+            
+                      
+          
+      
+});
+
+app.get('/verRutas',verificarSesion, (req, res)=>{     
+  connection.query('SELECT a.*,b.* FROM serviciosAsignadosAdmin a, clientesAdministracion b WHERE a.noCliente = b.noCliente AND a.statusServicio = ?  ORDER BY b.municipio,b.cp',['PENDIENTE'],(error, results)=>{
+      if(error){
+          throw error;
+      } else {
+        connection.query('SELECT * FROM unidades WHERE statusServicio = ?',['INICIADO'],(error, results2)=>{
+          if(error){
+              throw error;
+          } else {
+            connection.query('SELECT a.*,b.* FROM serviciosAsignadosSuministro a, clientesSuministro b WHERE a.noCliente = b.noCliente AND a.statusServicio = ?  ORDER BY b.municipio,b.cp',['PENDIENTE'],(error, results3)=>{
+              if(error){
+                  throw error;
+              } else {
+                      const unidades = results2.map(row => row.noEco ); 
+                      const datos = req.session.datos;                     
+                      res.render('verRutas', {results:results,results3:results3,unidades,datos});  
+                
+                          
+              }   
+          })
+            
+                      
+          }   
+      })
+        
+                  
+      }   
+  })
+});
+
+
+app.get('/gestionServicios',verificarSesion, (req, res)=>{     
+  connection.query('SELECT a.*,b.* FROM serviciosAsignadosAdmin a, clientesAdministracion b WHERE a.noCliente = b.noCliente AND a.statusServicio != ?  ORDER BY a.statusServicio',['PENDIENTE'],(error, results)=>{
+      if(error){
+          throw error;
+      } else {
+        connection.query('SELECT * FROM unidades WHERE statusServicio = ?',['INICIADO'],(error, results2)=>{
+          if(error){
+              throw error;
+          } else {
+            connection.query('SELECT a.*,b.* FROM serviciosAsignadosSuministro a, clientesSuministro b WHERE a.noCliente = b.noCliente AND a.statusServicio != ?  ORDER BY a.statusServicio',['PENDIENTE'],(error, results3)=>{
+              if(error){
+                  throw error;
+              } else {
+                      const unidades = results2.map(row => row.noEco ); 
+                      const datos = req.session.datos;                     
+                      res.render('gestionServicios', {results:results,results3:results3,unidades,datos});  
+                
+                          
+              }   
+          })
+            
+                      
+          }   
+      })
+        
+                  
+      }   
+  })
+});
+
+
+app.post('/updateAdminService',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const noEco = req.body.selectedOption;
+  const status = 'PENDIENTE';
+  connection.query('INSERT INTO serviciosAsignadosAdmin (noCliente,noEco,fecha,statusServicio) VALUES (?,?,?,?)',[noCliente,noEco,fechaActual,status],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/updateSumService',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const noEco = req.body.selected;
+  const status = 'PENDIENTE';
+  connection.query('INSERT INTO serviciosAsignadosSuministro (noCliente,noEco,fecha,statusServicio) VALUES (?,?,?,?)',[noCliente,noEco,fechaActual,status],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/updateSuministros',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const fecha = req.body.fecha;
+ 
+  connection.query('UPDATE clientesSuministro SET ? WHERE noCliente = ?',[{proximaCarga:fecha},noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/terminarAdmin',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const status = req.body.selectedOption;
+ 
+  connection.query('UPDATE serviciosAsignadosAdmin SET ? WHERE noCliente = ? AND statusServicio = ?',[{statusServicio:status,fecha:fechaActual},noCliente,'PENDIENTE'],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/terminarSum',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const status = req.body.selected;
+ 
+  connection.query('UPDATE serviciosAsignadosSuministro SET ? WHERE noCliente = ? AND statusServicio = ?',[{statusServicio:status,fecha:fechaActual},noCliente,'PENDIENTE'],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
 
 
 app.use('/', require('./router'));
