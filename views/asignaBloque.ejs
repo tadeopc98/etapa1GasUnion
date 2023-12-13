@@ -41,6 +41,36 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.5/dist/sweetalert2.min.css">
     <link href="/css/theme.css" rel="stylesheet" media="all">
 
+    <style>
+        .adminPENDIENTE {
+            background-color: white;
+            
+        }
+        
+        .adminASIGNADO {
+            background-color: rgb(116, 176, 250);
+        
+        }
+        .adminCOMPLETADO {
+            background-color: rgb(32, 167, 32);
+            
+        }
+        .adminCANCELADO {
+            background-color: red;
+            
+        }
+        .adminREAGENDADO {
+            background-color:yellow;
+            
+        }
+        .adminPARCIAL{
+            background-color: rgb(235, 134, 235);
+        }
+        .titulo{
+            background-color: gray;
+        }
+        
+    </style>
 </head>
 
 <body class="animsition">
@@ -174,38 +204,84 @@
                                 <input type="text" class="form-control pull-right" style="width:20%" id="search" placeholder="Buscar...">
                             </div>
                             <div class="table-responsive table-responsive-data2">
-                                <table class="table table-data2" id="administracion">
+                                <table style=" border: 1px solid black;" class="table table-data2" id="administracion">
                                     <h3 class="title-5 m-b-35">Administración</h3>
                                     <thead>
-                                        <tr>
+                                        <tr class="titulo">
                                             
-                                            <th style="font-size: 12px;">Nombre Cliente</th>
-                                            <th style="font-size: 12px;">Direccion</th>
-                                            <th style="font-size: 12px;">Fecha y Hora</th>
-                                            <th style="font-size: 12px;">Unidad</th>
-                                            <th style="font-size: 12px;">Estatus</th>
-                                            <th style="font-size: 12px;">LTS Vendidos</th>
-                                            <th style="font-size: 12px">TOTAL $</th>
-                                            <th style="font-size: 12px">Acciones   </th>
+                                            <th style="font-size: 16px;border: 1px solid #333; color:white;">Números de Clientes</th>
+                                            <th style="font-size: 16px;border: 1px solid #333; color:white;">Municipio</th>
+                                            <th style="font-size: 16px;border: 1px solid #333; color:white;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="spacer"></tr>
+                                        <tr class="tr-shadow">
+                                            <% results3.forEach((adminService)=>{ %>
+                                                <tr class="<%= 'admin' + adminService.statusServicio %>"> 
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.numerosClientes %></td>  
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.municipio %></td>
+                                                   
+                                                    
+                                                    
+                                                    
+                                                    <td style="font-size: 12px; border: 1px solid #333; color: white;">
+                                                        <div class="table-data-feature">
+                                                            
+                                                            <select class="custom-select" id="selectedAdminRoute_<%= adminService.numerosClientes %>">
+                                                                <option value="" disabled selected>Selecciona una opción</option>
+                                                                <% unidades.forEach((noEco) => { %>
+                                                                    <option><%=  noEco %></option>
+                                                                  <% }); %>
+                                                            </select>
+                                                            <button class="item btn-asignar" data-cliente-id="<%= adminService.numerosClientes %>" data-toggle="tooltip" data-placement="top" title="Aprobar">
+                                                                <i class="zmdi zmdi-check"></i>
+                                                            </button>
+                                                            
+                                                        </div>
+                                                    </td>
+                                                    
+                                                </tr>                                   
+                                             <% }) %>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
+                                <table style=" border: 1px solid black;" class="table table-data2" id="administracion">
+                                    <h3 class="title-5 m-b-35">Suministros</h3>
+                                    <thead>
+                                        <tr class="titulo">
+                                            
+                                            <th style="font-size: 16px;border: 1px solid #333; color:white;">Números de Clientes</th>
+                                            <th style="font-size: 16px;border: 1px solid #333; color:white;">Municipio</th>
+                                            <th style="font-size: 16px;border: 1px solid #333; color:white;">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr class="spacer"></tr>
                                         <tr class="tr-shadow">
                                             <% results.forEach((adminService)=>{ %>
-                                                <tr>  
-                                                    <td style="font-size: 12px;"><%= adminService.nombreCliente %></td>  
-                                                    <td style="font-size: 12px;"><%= adminService.direccion %></td>
-                                                    <td style="font-size: 12px;"><%= adminService.fecha %></td>
-                                                    <td style="font-size: 12px;"><%= adminService.noEco %></td>
-                                                    <td style="font-size: 12px;"><%= adminService.statusServicio %></td>
-                                                    <td style="font-size: 12px;">LTS.<input type="text" name="litrosAdmin" id="litrosAdmin_<%= adminService.noCliente %>"></td>
-                                                    <td style="font-size: 12px;">$<input type="text" name="totalAdmin" id="totalAdmin_<%= adminService.noCliente %>"></td>
-                                                    <td>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="completaAdmin(<%= adminService.noCliente %>)">
-                                                            <i class="zmdi zmdi-save"></i>
-                                                        </button>
+                                                <tr class="<%= 'admin' + adminService.statusServicio %>"> 
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.numerosClientes %></td>  
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.municipio %></td>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    <td style="font-size: 12px; border: 1px solid #333; color: white;">
+                                                        <div class="table-data-feature">
+                                                            <select class="custom-select" id="selectedAdminRoutesum_<%= adminService.numerosClientes %>">
+                                                                <option value="" disabled selected>Selecciona una opción</option>
+                                                                <% unidades.forEach((noEco) => { %>
+                                                                    <option><%=  noEco %></option>
+                                                                  <% }); %>
+                                                            </select>
+                                                            <button class="item btn-asignar-sum" data-cliente-id="<%= adminService.numerosClientes %>" data-toggle="tooltip" data-placement="top" title="Aprobar">
+                                                                <i class="zmdi zmdi-check"></i>
+                                                            </button>
+                                                            
+                                                            
+                                                        </div>
                                                     </td>
                                                     
                                                 </tr>                                   
@@ -213,46 +289,9 @@
                                         </tr>
                                     </tbody>
                                 </table>
+
                                 
-                                <table class="table table-data2" id="administracion">
-                                    <h3 class="title-5 m-b-35">Suministros</h3>
-                                    <thead>
-                                        <tr>
-                                            
-                                            <th style="font-size: 12px;">Nombre Cliente</th>
-                                            <th style="font-size: 12px;">Direccion</th>
-                                            <th style="font-size: 12px;">Fecha y Hora</th>
-                                            <th style="font-size: 12px;">Unidad</th>
-                                            <th style="font-size: 12px;">Estatus</th>
-                                            <th style="font-size: 12px;">LTS Vendidos</th>
-                                            <th style="font-size: 12px">TOTAL $</th>
-                                            <th style="font-size: 12px">Acciones</th>
-                                            
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="spacer"></tr>
-                                        <tr class="tr-shadow">
-                                            <% results3.forEach((sumService)=>{ %>
-                                                <tr>  
-                                                    <td style="font-size: 12px;"><%= sumService.nombreCliente %></td>  
-                                                    <td style="font-size: 12px;"><%= sumService.direccion %></td>
-                                                    <td style="font-size: 12px;"><%= sumService.fecha %></td>
-                                                    <td style="font-size: 12px;"><%= sumService.noEco %></td>
-                                                    <td style="font-size: 12px;"><%= sumService.statusServicio %></td>
-                                                    <td style="font-size: 12px;">LTS.<input type="text" name="litrosSum" id="litrosSum_<%= sumService.noCliente %>">    </td>
-                                                    <td style="font-size: 12px;">$<input type="text" name="totalSum" id="totalSum_<%= sumService.noCliente %>"></td>
-                                                    <td>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="completaSum(<%= sumService.noCliente %>)">
-                                                            <i class="zmdi zmdi-save"></i>
-                                                        </button>
-                                                    </td>
-                                                    
-                                                </tr>                                   
-                                             <% }) %>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                
                                 
                                 
                             </div>
@@ -269,47 +308,112 @@
     </div>
 
     <script>
-        function completaAdmin(noCliente) {
-            const litrosAdmin = document.getElementById(`litrosAdmin_${noCliente}`).value;
-            const totalAdmin = document.getElementById(`totalAdmin_${noCliente}`).value;
 
         
-            if (!litrosAdmin || !totalAdmin) {
-                alert('Selecciona una opción antes de guardar.');
-                return;
-            }
+
         
-            // Realizar una solicitud AJAX al servidor (Node.js) para guardar la opción en la base de datos
-            $.post('/completaAdmin', { noCliente: noCliente, litrosAdmin: litrosAdmin, totalAdmin:totalAdmin }, function(data) {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                   window.location.reload();
-                }
+
+        $(document).ready(function() {
+            // Inicializar el datepicker para cada campo de fecha
+            $(".datepicker").datepicker({
+                format: 'yyyy-mm-dd', // Formato de fecha deseado
+                autoclose: true
             });
-        }
+        });
 
-       
-
-        function completaSum(noCliente){
-            const litrosSum = document.getElementById(`litrosSum_${noCliente}`).value;
-            const totalSum = document.getElementById(`totalSum_${noCliente}`).value;
-
-            if(!litrosSum || !totalSum){
-                alert('selecciona ruta antes de guardar');
-                return;
-            }
-
-            $.post('/completaSum', { noCliente: noCliente, litrosSum: litrosSum,totalSum:totalSum }, function(data) {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                   window.location.reload();
-                }
-            });
-        }
         
+
+        
+        
+
     </script>
+
+    <script>
+        // Asegúrate de ejecutar este código después de que se cargue el DOM
+        document.addEventListener("DOMContentLoaded", function () {
+            // Selecciona todos los botones con la clase btn-asignar
+            const btnAsignarArray = document.querySelectorAll('.btn-asignar');
+    
+            // Agrega un controlador de clic a cada botón
+            btnAsignarArray.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // Obtiene el ID del cliente desde el atributo data
+                    const clienteId = this.dataset.clienteId;
+    
+                    // Obtiene el valor seleccionado del select
+                    const unidadSeleccionada = document.getElementById(`selectedAdminRoute_${clienteId}`).value;
+
+                    const clienteIds = clienteId.split(',').map(Number);
+    
+                    // Realiza la solicitud AJAX
+                    fetch('/asignar-unidad-admin', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            clienteIds: clienteIds,
+                            unidad: unidadSeleccionada
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('ACTUALIZADA')
+                        console.log(data);
+                        // Puedes realizar acciones adicionales después de la actualización
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error al enviar solicitud AJAX:', error);
+                    });
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // Asegúrate de ejecutar este código después de que se cargue el DOM
+        document.addEventListener("DOMContentLoaded", function () {
+            // Selecciona todos los botones con la clase btn-asignar
+            const btnAsignarArray = document.querySelectorAll('.btn-asignar-sum');
+    
+            // Agrega un controlador de clic a cada botón
+            btnAsignarArray.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // Obtiene el ID del cliente desde el atributo data
+                    const clienteId = this.dataset.clienteId;
+    
+                    // Obtiene el valor seleccionado del select
+                    const unidadSeleccionada = document.getElementById(`selectedAdminRoutesum_${clienteId}`).value;
+
+                    const clienteIds = clienteId.split(',').map(Number);
+    
+                    // Realiza la solicitud AJAX
+                    fetch('/asignar-unidad-sum', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            clienteIds: clienteIds,
+                            unidad: unidadSeleccionada
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('ACTUALIZADA')
+                        console.log(data);
+                        // Puedes realizar acciones adicionales después de la actualización
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error al enviar solicitud AJAX:', error);
+                    });
+                });
+            });
+        });
+    </script>
+    
     
 
     <!-- Jquery JS-->

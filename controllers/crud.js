@@ -25,6 +25,7 @@ exports.saveUser = (req, res)=>{
     const pass = req.body.pass;
     const rol = req.body.rol.toUpperCase();
     const st = req.body.st.toUpperCase();
+    const telefono = req.body.telefono;
     
     connection.query('SELECT COUNT(*) AS count FROM usuarios WHERE noEmpleado = ?',[num], (error, countResult)=>{
         if(error){
@@ -33,7 +34,7 @@ exports.saveUser = (req, res)=>{
             const existingCount = countResult[0].count;
             if (existingCount === 0)
             {
-                connection.query('INSERT INTO usuarios SET ?',{nombre:nombre,noEmpleado:num,username:user,password:pass,rol:rol,status:st}, (error, results)=>{
+                connection.query('INSERT INTO usuarios SET ?',{nombre:nombre,noEmpleado:num,username:user,password:pass,rol:rol,status:st,telefono:telefono}, (error, results)=>{
                     if(error){
                         console.log(error);
                     }else{

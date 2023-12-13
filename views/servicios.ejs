@@ -41,6 +41,29 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.5/dist/sweetalert2.min.css">
     <link href="/css/theme.css" rel="stylesheet" media="all">
 
+    <style>
+        .suministroDisponible {
+            background-color: white;
+        }
+        
+        .suministroCreado {
+            background-color: blue;
+        }
+        .suministroPendiente {
+            background-color: yellow;
+        }
+        
+        .suministroCompletado {
+            background-color: green;
+        }
+        .suministroCancelado {
+            background-color: red;
+        }
+        
+        .suministroReAgendado {
+            background-color: orange;
+        }
+    </style>
 </head>
 
 <body class="animsition">
@@ -196,7 +219,7 @@
                                                     <td style="font-size: 12px;"><%= adminService.nombreCliente %></td>  
                                                     <td style="font-size: 12px;"><%= adminService.cp %></td>
                                                     <td style="font-size: 12px;"><%= adminService.municipio %></td>
-                                                    <td style="font-size: 12px;"><%= adminService.fechaSuministro %></td>
+                                                    <td style="font-size: 12px;"><%= adminService.colonia %></td>
                                                     <td style="font-size: 12px;"><%= adminService.direccion %></td>
                                                     <td style="font-size: 12px;"><%= adminService.telefonoCelular %></td>
                                                     <td style="font-size: 12px;">
@@ -254,9 +277,9 @@
                                                                   <% }); %>
                                                                 <!-- Agrega más opciones según tus necesidades -->
                                                             </select>
-                                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="guardarSeleccion2(<%= sumService.noCliente %>)">
-                                                                <i class="zmdi zmdi-check"></i>
-                                                            </button>
+                                                                <button class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="guardarSeleccion2(<%= sumService.noCliente %>)">
+                                                                    <i class="zmdi zmdi-check"></i>
+                                                                </button>
                                                         </div>
                                                     </td>
                                                     

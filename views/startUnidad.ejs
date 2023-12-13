@@ -570,41 +570,70 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-3">
+                                    <label for="fechaInicio" class="control-label mb-1">Fecha</label>
+                                    <input type="text" class="form-control" id="fechaInicio" name="fechaInicio" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="operador" class="control-label mb-1">Operador</label>
+                                    <select class="custom-select" id="operador" name="operador">
+                                        <option value="" disabled selected>Selecciona una opción</option>
+                                        <% operadores.forEach((nombre) => { %>
+                                            <option><%=  nombre %></option>
+                                          <% }); %>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
                                     <label for="noEco" class="control-label mb-1">Número de Economico</label>
                                     <input type="text" class="form-control" id="noEco" name="noEco" value="<%= unidad.noEco  %>" readonly>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="porcentajeLp" class="control-label mb-1">Porcentaje gas LP</label>
-                                    <input type="text" class="form-control" id="porcentajeLp" name="porcentajeLp">
+                                    
                                 </div>
-                                <div class="col-md-3">
-                                    <label for="porcentajeDisel" class="control-label mb-1">Porcentaje DISEL</label>
-                                    <input type="text" class="form-control" id="porcentajeDisel" name="porcentajeDisel">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="operador" class="control-label mb-1">Operador</label>
-                                    <input type="text" class="form-control" id="operador" name="operador">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="tripulante1" class="control-label mb-1">Tripulante #1</label>
-                                    <input type="text" class="form-control" id="tripulante1" name="tripulante1">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="tripulante2" class="control-label mb-1">Tripulante #2</label>
-                                    <input type="text" class="form-control" id="tripulante2" name="tripulante2">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="fechaInicio" class="control-label mb-1">Fecha</label>
-                                    <input type="text" class="form-control" id="fechaInicio" name="fechaInicio" readonly>
-                                </div>
+                                
                                 <div class="col-md-3">
                                     <label for="horaInicio" class="control-label mb-1">Hora de Inicio</label>
                                     <input type="text" class="form-control" id="horaInicio" name="horaInicio" readonly>
                                 </div>
                                 <div class="col-md-3">
+                                    <label for="tripulante1" class="control-label mb-1">Tripulante #1</label>
+                                    <select class="custom-select" id="tripulante1" name="tripulante1">
+                                        <option value="" disabled selected>Selecciona una opción</option>
+                                        <% operadores.forEach((nombre) => { %>
+                                            <option><%=  nombre %></option>
+                                          <% }); %>
+                                    </select>
+                                </div>
+                               
+                               
+                               
+                               
+                                <div class="col-md-3">
+                                    <label for="porcentajeLp" class="control-label mb-1">Porcentaje gas LP</label>
+                                    <input type="text" class="form-control" id="porcentajeLp" name="porcentajeLp">
+                                </div>
+                                
+                                <div class="col-md-3">
+                                   
+                                </div>
+                                <div class="col-md-3">
                                     <label for="usuarioInicia" class="control-label mb-1">Usuario Inicia</label>
                                     <input type="text" class="form-control" id="usuarioInicia" name="usuarioInicia" value="<%= datos.nombre %>" readonly>
                                 </div>
+                                
+                                <div class="col-md-3">
+                                    <label for="tripulante2" class="control-label mb-1">Tripulante #2</label>
+                                    <select class="custom-select" id="tripulante2" name="tripulante2">
+                                        <option value="" disabled selected>Selecciona una opción</option>
+                                        <% operadores.forEach((nombre) => { %>
+                                            <option><%=  nombre %></option>
+                                          <% }); %>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="porcentajeDisel" class="control-label mb-1">Porcentaje DISEL</label>
+                                    <input type="text" class="form-control" id="porcentajeDisel" name="porcentajeDisel">
+                                </div>
+                                
                             </div>
                         </div>
                     </div>

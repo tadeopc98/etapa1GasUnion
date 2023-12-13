@@ -32,6 +32,15 @@
 
     <!-- Main CSS-->
     <link href="/css/theme.css" rel="stylesheet" media="all">
+    <style>
+        .logo-container {
+            display: inline-block;
+            border: 2px solid white;
+            border-radius: 50%;
+            padding: 5px; /* Ajusta según sea necesario */
+        }
+        
+    </style>
 
 </head>
 
@@ -43,7 +52,10 @@
                 <div class="header3-wrap">
                     <div class="header__logo">
                         <a href="/administracion"> 
-                            <img src="images/icon/Logo1.png" alt="GasUnion" style="height: 50px;" />
+
+                            <div class="logo-container">
+                                <img src="images/icon/Logo1.png" alt="GasUnion" style="height: 60px;" />
+                            </div>
                             
                         </a>
                     </div>
@@ -102,12 +114,7 @@
                                     <li>
                                         <a href="/addUnidad">Agregar Unidad</a>
                                     </li>
-                                    <li>
-                                        <a href="/addMantenimiento">Registrar Mantenimiento</a>
-                                    </li>
-                                    <li>
-                                        <a href="/viewMantenimientos">Control de mantenimientos</a>
-                                    </li>
+                                  
                                 </ul>
                             </li>
 
@@ -117,7 +124,10 @@
                                     <span class="bot-line"></span>Servicios</a>
                                 <ul class="header3-sub-list list-unstyled">
                                     <li>
-                                        <a href="/gestionServicios">Gestion de Servicios (General)</a>
+                                        <a href="/rutasAdmin">Rutas Administracion</a>
+                                    </li>
+                                    <li>
+                                        <a href="/rutasSum">Rutas Suministros</a>
                                     </li>
                                     <li>
                                         <a href="/viewUnidadesServicios">Visualizar Unidades (Inicio/Cierre)</a>
@@ -126,10 +136,7 @@
                                         <a href="/verRutas">Visualizar Rutas (Operador)</a>
                                     </li>
                                     <li>
-                                        <a href="/prepSum">Preparar Suministros (Generar Servicios)</a>
-                                    </li>
-                                    <li>
-                                        <a href="/servicios">Organizar Servicios (Asignar Rutas)</a>
+                                        <a href="/asignaBloque">Asignacion x Bloque</a>
                                     </li>
                                 </ul>
                             </li>
@@ -236,7 +243,7 @@
                                 <i class="fas fa-inbox"></i>Unidades</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
-                                    <a href="/viewUnidades">Ver Unidades</a>
+                                    <a href="/viewUnidadesServicios">Ver Unidades</a>
                                 </li>
                                 <li>
                                     <a href="/addUnidad">Agregar Unidad</a>
@@ -249,10 +256,28 @@
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="chart.html">
-                                <i class="fas fa-usd"></i>Precio Gas</a>
+                        <li class="has-sub">
+                            <a class="js-arrow" href="#">
+                                <i class="fas fa-inbox"></i>Servicios</a>
+                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+                                <li>
+                                    <a href="/rutasAdmin">Rutas Administracion</a>
+                                </li>
+                                <li>
+                                    <a href="/rutasSum">Rutas Suministros</a>
+                                </li>
+                                <li>
+                                    <a href="/viewUnidadesServicios">Visualizar Unidades (Inicio/Cierre)</a>
+                                </li>
+                                <li>
+                                    <a href="/verRutas">Visualizar Rutas (Operador)</a>
+                                </li>
+                                <li>
+                                    <a href="/asignaBloque">Asignacion x Bloque</a>
+                                </li>
+                            </ul>
                         </li>
+                        
                         
                     </ul>
                 </div>

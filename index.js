@@ -208,15 +208,15 @@ app.get('/coordinador',verificarSesion, (req, res) => {
 });
 
 app.get('/operador',verificarSesion, (req, res) => {
-    connection.query('SELECT * FROM clientes WHERE diaCarga BETWEEN DAY(CURDATE()) + 1 AND DAY(DATE_ADD(CURDATE(), INTERVAL 7 DAY)) AND diaCarga <= DAY(LAST_DAY(DATE_ADD(CURDATE(), INTERVAL 7 DAY))) LIMIT 15;',(error, results)=>{
+    connection.query('SELECT COUNT(*) as totalServicios FROM clientesSuministro WHERE statusServicio = ?',['COMPLETADO'],(error, results)=>{
       if(error){
           throw error;
       } else {
-        connection.query('SELECT COUNT(*) as total FROM clientes',(error, results2)=>{
+        connection.query('SELECT COUNT(*) as totalServicios FROM clientesSuministro WHERE statusServicio IN (?,?)',['CANCELADO','REAGENDADO'],(error, results2)=>{
           if(error){
               throw error;
           } else {
-            connection.query('SELECT precio FROM preciogas limit 1',(error, results3)=>{
+            connection.query('SELECT COUNT(*) as totalServicios FROM clientesSuministro WHERE statusServicio = ?',['ASIGNADO'],(error, results3)=>{
               if(error){
                   throw error;
               } else {console.log(results)
@@ -449,9 +449,18 @@ app.get('/startUnidad/:id', (req, res) => {
     if (error) {
       throw error;
     } else {
-        const datos = req.session.datos;
+
+        connection.query('SELECT * FROM usuarios WHERE rol IN (?,?) ', ['OPERADOR','TRIPULANTE'], (error, results2) => {
+          if(error){
+            throw error;
+          } else {
+            const datos = req.session.datos;
+            const operadores = results2.map(row => row.nombre ); 
+            
+            res.render('startUnidad', { unidad: results[0],datos, operadores });
+          }
+        })
         
-        res.render('startUnidad', { unidad: results[0],datos });
      
      
     }
@@ -474,7 +483,7 @@ app.get('/closeUnidad/:id', (req, res) => {
 });
 
 app.get('/servicios',verificarSesion, (req, res)=>{     
-  connection.query('SELECT a.*,b.* FROM clientesAdministracion a, bloques b WHERE a.bloque = b.nombreBloque AND a.bloque = ? AND a.noCliente NOT IN (SELECT noCliente FROM serviciosAsignadosAdmin WHERE statusServicio = ?) ORDER BY a.municipio,a.cp',['BLOQUE 4','PENDIENTE'],(error, results)=>{
+  connection.query('SELECT a.*,b.* FROM clientesAdministracion a, bloques b WHERE a.bloque = b.nombreBloque AND a.bloque = ? AND a.noCliente NOT IN (SELECT noCliente FROM serviciosAsignadosAdmin WHERE statusServicio = ?) ORDER BY a.municipio,a.cp,a.colonia',['BLOQUE 4','PENDIENTE'],(error, results)=>{
       if(error){
           throw error;
       } else {
@@ -503,6 +512,129 @@ app.get('/servicios',verificarSesion, (req, res)=>{
   })
 });
 
+app.get('/rutasAdmin',verificarSesion, (req, res)=>{     
+  connection.query('SELECT a.*,b.* FROM clientesAdministracion a, bloques b WHERE a.bloque = b.nombreBloque AND a.bloque = ? AND statusServicio != ?  ORDER BY a.municipio,a.cp,a.colonia, a.statusServicio',['BLOQUE 2','COMPLETADO'],(error, results)=>{
+      if(error){
+          throw error;
+      } else {
+        connection.query('SELECT * FROM unidades WHERE statusServicio = ?',['INICIADO'],(error, results2)=>{
+          if(error){
+              throw error;
+          } else {
+            
+            
+            connection.query('SELECT a.*,b.* FROM clientesAdministracion a, bloques b WHERE a.bloque = b.nombreBloque AND a.bloque = ? AND statusServicio = ? ORDER BY a.municipio,a.cp,a.colonia, a.statusServicio',['BLOQUE 2','COMPLETADO'],(error, results3)=>{
+              if(error){
+                  throw error;
+              } else {
+                
+                
+                          const unidades = results2.map(row => row.noEco ); 
+                          const datos = req.session.datos;                     
+                          res.render('rutasAdmin', {results:results,results3:results3,unidades,datos});              
+              }   
+          })              
+          }   
+      })     
+      }   
+  })
+});
+
+app.get('/verRutas',verificarSesion, (req, res)=>{    
+  
+  const sqlQuery = `
+  SELECT 
+    *
+FROM 
+    gasunion.clientesSuministro
+WHERE
+    (
+        (frecuenciaCarga = 'SEMANAL' AND DATE_ADD(ultimaCarga, INTERVAL 7 DAY) = CURDATE()) OR
+        (frecuenciaCarga = 'QUINCENAL' AND DATE_ADD(ultimaCarga, INTERVAL 15 DAY) = CURDATE()) OR
+        (frecuenciaCarga = 'MENSUAL' AND DATE_ADD(ultimaCarga, INTERVAL 1 MONTH) = CURDATE())
+    )
+    AND statusServicio != ? 
+  `;
+  connection.query(sqlQuery,['PENDIENTE'],(error, results3)=>{
+      if(error){
+          throw error;
+      } else {
+        connection.query('SELECT * FROM unidades WHERE statusServicio = ?',['INICIADO'],(error, results2)=>{
+          if(error){
+              throw error;
+          } else {
+            connection.query('SELECT a.*,b.* FROM clientesAdministracion a, bloques b WHERE a.bloque = b.nombreBloque AND a.bloque = ? AND statusServicio != ?  ORDER BY a.municipio,a.cp,a.colonia, a.statusServicio',['BLOQUE 2','PENDIENTE'],(error, results)=>{
+              if(error){
+                  throw error;
+              } else {
+                connection.query('SELECT * FROM usuarios WHERE rol IN (?,?) ', ['OPERADOR','TRIPULANTE'], (error, results5) => {
+                  if(error){
+                    throw error;
+                  } else {
+                    const unidades = results2.map(row => row.noEco ); 
+                    const datos = req.session.datos;  
+                    const operadores = results5.map(row => row.nombre );                    
+                    res.render('verRutas', {results:results,results3:results3,unidades,datos,operadores});  
+                        }
+                })
+                             
+              }   
+          })             
+          }   
+      })     
+      }   
+  })
+});
+
+app.get('/asignaBloque',verificarSesion, (req, res)=>{    
+  
+  const sqlQuery = `
+  SELECT
+  GROUP_CONCAT(noCliente ORDER BY noCliente) AS numerosClientes,
+  municipio
+FROM
+  gasunion.clientesSuministro
+WHERE
+  (
+      (frecuenciaCarga = 'SEMANAL' AND DATE_ADD(ultimaCarga, INTERVAL 7 DAY) = CURDATE()) OR
+      (frecuenciaCarga = 'QUINCENAL' AND DATE_ADD(ultimaCarga, INTERVAL 15 DAY) = CURDATE()) OR
+      (frecuenciaCarga = 'MENSUAL' AND DATE_ADD(ultimaCarga, INTERVAL 1 MONTH) = CURDATE())
+  )
+  AND statusServicio = ?
+GROUP BY
+  municipio;
+  `;
+  connection.query(sqlQuery,['PENDIENTE'],(error, results)=>{
+      if(error){
+          throw error;
+      } else {
+        connection.query('SELECT * FROM unidades WHERE statusServicio = ?',['INICIADO'],(error, results2)=>{
+          if(error){
+              throw error;
+          } else {
+            const sqlAdminQuery = `
+            SELECT GROUP_CONCAT(noCliente) AS numerosClientes, municipio
+            FROM gasunion.clientesAdministracion
+            	WHERE statusServicio = ?
+                AND bloque = ?
+            GROUP BY municipio
+            ORDER BY municipio
+            `;
+            connection.query(sqlAdminQuery,['PENDIENTE','BLOQUE 2'],(error, results3)=>{
+              if(error){
+                  throw error;
+              } else {
+                 const unidades = results2.map(row => row.noEco ); 
+                 const datos = req.session.datos;                     
+                 res.render('asignaBloque', {results:results,results3:results3,unidades,datos});              
+              }   
+          })             
+          }   
+      })     
+      }   
+  })
+});
+
 app.get('/prepSum',verificarSesion, (req, res)=>{     
   
             connection.query('SELECT * FROM clientesSuministro  ORDER BY municipio,cp,ultimaCarga',(error, results)=>{
@@ -522,8 +654,21 @@ app.get('/prepSum',verificarSesion, (req, res)=>{
       
 });
 
-app.get('/verRutas',verificarSesion, (req, res)=>{     
-  connection.query('SELECT a.*,b.* FROM serviciosAsignadosAdmin a, clientesAdministracion b WHERE a.noCliente = b.noCliente AND a.statusServicio = ?  ORDER BY b.municipio,b.cp',['PENDIENTE'],(error, results)=>{
+app.get('/rutasSum',verificarSesion, (req, res)=>{ 
+  const sqlQuery = `
+  SELECT 
+    *
+FROM 
+    clientesSuministro
+WHERE
+    (
+        (frecuenciaCarga = 'SEMANAL' AND DATE_ADD(ultimaCarga, INTERVAL 7 DAY) = CURDATE()) OR
+        (frecuenciaCarga = 'QUINCENAL' AND DATE_ADD(ultimaCarga, INTERVAL 15 DAY) = CURDATE()) OR
+        (frecuenciaCarga = 'MENSUAL' AND DATE_ADD(ultimaCarga, INTERVAL 1 MONTH) = CURDATE())
+    )
+    AND statusServicio != ?
+`;
+  connection.query(sqlQuery,['COMPLETADO'],(error, results)=>{
       if(error){
           throw error;
       } else {
@@ -531,13 +676,26 @@ app.get('/verRutas',verificarSesion, (req, res)=>{
           if(error){
               throw error;
           } else {
-            connection.query('SELECT a.*,b.* FROM serviciosAsignadosSuministro a, clientesSuministro b WHERE a.noCliente = b.noCliente AND a.statusServicio = ?  ORDER BY b.municipio,b.cp',['PENDIENTE'],(error, results3)=>{
+            const sqlQuery2 = `
+            SELECT 
+    *
+FROM 
+    gasunion.clientesSuministro
+WHERE
+    (
+        (frecuenciaCarga = 'SEMANAL' AND DATE_ADD(ultimaCarga, INTERVAL 7 DAY) = CURDATE()) OR
+        (frecuenciaCarga = 'QUINCENAL' AND DATE_ADD(ultimaCarga, INTERVAL 15 DAY) = CURDATE()) OR
+        (frecuenciaCarga = 'MENSUAL' AND DATE_ADD(ultimaCarga, INTERVAL 1 MONTH) = CURDATE())
+    )
+    AND statusServicio = ?
+`;
+            connection.query(sqlQuery2,['COMPLETADO'],(error, results3)=>{
               if(error){
                   throw error;
               } else {
                       const unidades = results2.map(row => row.noEco ); 
                       const datos = req.session.datos;                     
-                      res.render('verRutas', {results:results,results3:results3,unidades,datos});  
+                      res.render('rutasSum', {results:results,results3:results3,unidades,datos});  
                 
                           
               }   
@@ -587,8 +745,8 @@ app.get('/gestionServicios',verificarSesion, (req, res)=>{
 app.post('/updateAdminService',verificarSesion, (req, res)=>{    
   const noCliente = req.body.noCliente;
   const noEco = req.body.selectedOption;
-  const status = 'PENDIENTE';
-  connection.query('INSERT INTO serviciosAsignadosAdmin (noCliente,noEco,fecha,statusServicio) VALUES (?,?,?,?)',[noCliente,noEco,fechaActual,status],(error, results)=>{
+  const status = 'ASIGNADO';
+  connection.query('UPDATE clientesAdministracion SET statusServicio = ?, unidadCarga = ? WHERE noCliente = ?',[status,noEco,noCliente],(error, results)=>{
       if(error){
           throw error;
           res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
@@ -602,9 +760,9 @@ app.post('/updateAdminService',verificarSesion, (req, res)=>{
 
 app.post('/updateSumService',verificarSesion, (req, res)=>{    
   const noCliente = req.body.noCliente;
-  const noEco = req.body.selected;
-  const status = 'PENDIENTE';
-  connection.query('INSERT INTO serviciosAsignadosSuministro (noCliente,noEco,fecha,statusServicio) VALUES (?,?,?,?)',[noCliente,noEco,fechaActual,status],(error, results)=>{
+  const noEco = req.body.selectedOption;
+  const status = 'ASIGNADO';
+  connection.query('UPDATE clientesSuministro SET statusServicio = ?, unidadCarga = ? WHERE noCliente = ?',[status,noEco,noCliente],(error, results)=>{
       if(error){
           throw error;
           res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
@@ -616,11 +774,10 @@ app.post('/updateSumService',verificarSesion, (req, res)=>{
   })
 });
 
-app.post('/updateSuministros',verificarSesion, (req, res)=>{    
+app.post('/marcarCompletada',verificarSesion, (req, res)=>{    
   const noCliente = req.body.noCliente;
-  const fecha = req.body.fecha;
- 
-  connection.query('UPDATE clientesSuministro SET ? WHERE noCliente = ?',[{proximaCarga:fecha},noCliente],(error, results)=>{
+  const status = 'COMPLETADO';
+  connection.query('UPDATE clientesAdministracion SET statusServicio = ? WHERE noCliente = ?',[status,noCliente],(error, results)=>{
       if(error){
           throw error;
           res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
@@ -631,6 +788,120 @@ app.post('/updateSuministros',verificarSesion, (req, res)=>{
       }   
   })
 });
+
+app.post('/marcarCompletadaSum',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const status = 'COMPLETADO';
+  connection.query('UPDATE clientesSuministro SET statusServicio = ? WHERE noCliente = ?',[status,noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/marcarReagendar',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const status = 'REAGENDADO';
+  connection.query('UPDATE clientesAdministracion SET statusServicio = ? WHERE noCliente = ?',[status,noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/marcarReagendarSum',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const status = 'REAGENDADO';
+  connection.query('UPDATE clientesSuministro SET statusServicio = ? WHERE noCliente = ?',[status,noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/marcarCancelacion',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const motivo = req.body.motivoSeleccionado;
+  const status = 'CANCELADO';
+  connection.query('UPDATE clientesAdministracion SET statusServicio = ?, observaciones = ? WHERE noCliente = ?',[status,motivo,noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/marcarCancelacionSum',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const motivo = req.body.motivoSeleccionado;
+  const status = 'CANCELADO';
+  connection.query('UPDATE clientesSuministro SET statusServicio = ?, observaciones = ? WHERE noCliente = ?',[status,motivo,noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/confirmaReagenda',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const fecha = req.body.fechaReagendar;
+  const status = 'PENDIENTE';
+  connection.query('UPDATE clientesAdministracion SET statusServicio = ?, proximaCarga = ? WHERE noCliente = ?',[status,fecha,noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/confirmaReagendaSum',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const fecha = req.body.fechaReagendar;
+  const status = 'PENDIENTE';
+  connection.query('UPDATE clientesSuministro SET statusServicio = ?, proximaCarga = ? WHERE noCliente = ?',[status,fecha,noCliente],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+
+
+
+
 
 app.post('/terminarAdmin',verificarSesion, (req, res)=>{    
   const noCliente = req.body.noCliente;
@@ -664,6 +935,81 @@ app.post('/terminarSum',verificarSesion, (req, res)=>{
   })
 });
 
+app.post('/asignaBloqueAdministracion',verificarSesion, (req, res)=>{    
+  const numerosClientes = req.body.numerosClientes;
+  const ruta = req.body.selectedAdminRoute;
+ 
+  connection.query('UPDATE clientesAdministracion SET statusServicio = ?, unidadCarga = ? WHERE noCliente IN (?)',['ASIGNADO',ruta,numerosClientes],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/asignaBloqueSuministro',verificarSesion, (req, res)=>{    
+  const noCliente = req.body.noCliente;
+  const status = req.body.selected;
+ 
+  connection.query('UPDATE serviciosAsignadosSuministro SET ? WHERE noCliente = ? AND statusServicio = ?',[{statusServicio:status,fecha:fechaActual},noCliente,'PENDIENTE'],(error, results)=>{
+      if(error){
+          throw error;
+          res.status(500).json({ success: false, message: 'Error al insertar en la base de datos.' });
+      } else {
+        res.json({ success: true, message: 'Opción guardada con éxito.' });
+        
+                  
+      }   
+  })
+});
+
+app.post('/asignar-unidad-admin', (req, res) => {
+  const { clienteIds, unidad } = req.body;
+
+  if (!clienteIds || !clienteIds.length) {
+    return res.status(400).json({ error: 'IDs de clientes no proporcionados.' });
+  }
+
+  // Construye la consulta SQL
+  const queryString = `UPDATE clientesAdministracion SET unidadCarga = ?, statusServicio = 'ASIGNADO' WHERE noCliente IN (?)`;
+  console.log(queryString);
+  // Ejecuta la consulta con los IDs de clientes
+  connection.query(queryString, [unidad,clienteIds], (error, results) => {
+    if (error) {
+      console.error('Error al actualizar:', error);
+      return res.status(500).json({ error: 'Error interno del servidor.' });
+    }
+
+    console.log('Actualización exitosa:', results);
+    res.json({ message: 'Actualización exitosa.' });
+  });
+});
+
+app.post('/asignar-unidad-sum', (req, res) => {
+  const { clienteIds, unidad } = req.body;
+
+  if (!clienteIds || !clienteIds.length) {
+    return res.status(400).json({ error: 'IDs de clientes no proporcionados.' });
+  }
+
+  // Construye la consulta SQL
+  const queryString = `UPDATE clientesSuministro SET unidadCarga = ?, statusServicio = 'ASIGNADO' WHERE noCliente IN (?)`;
+  console.log(queryString);
+  // Ejecuta la consulta con los IDs de clientes
+  connection.query(queryString, [unidad,clienteIds], (error, results) => {
+    if (error) {
+      console.error('Error al actualizar:', error);
+      return res.status(500).json({ error: 'Error interno del servidor.' });
+    }
+
+    console.log('Actualización exitosa:', results);
+    res.json({ message: 'Actualización exitosa.' });
+  });
+});
 
 app.use('/', require('./router'));
 
@@ -673,4 +1019,10 @@ app.use('/', require('./router'));
 
 app.listen(port, () => {
   console.log(`Servidor iniciado en http://localhost:${port}`);
+});
+
+
+process.on('SIGINT', () => {
+  conexion.end();
+  process.exit();
 });

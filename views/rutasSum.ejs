@@ -203,15 +203,7 @@
                         <div class="col-md-12">
                             <h3 class="title-5 m-b-35"></h3>
                             <div class="form-group">
-                                
-                                <button class="btn btn-lg btn-success" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="enviarPorWhatsApp()">
-                                    Envio WhatsApp
-                                </button>
-                                
-                                
-                                
                                 <input type="text" class="form-control pull-right" style="width:20%" id="search" placeholder="Buscar...">
-                               
                             </div>
                             <div class="table-responsive table-responsive-data2">
                                 <table style=" border: 1px solid black;" class="table table-data2" id="administracion">
@@ -234,13 +226,13 @@
                                         <tr class="tr-shadow">
                                             <% results.forEach((adminService)=>{ %>
                                                 <tr class="<%= 'admin' + adminService.statusServicio %>"> 
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.noCliente %>*   </td>  
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.nombreCliente %> </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.cp %>*  </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.municipio %> </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.colonia %>* </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.unidadCarga %>   </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.statusServicio %>*  </td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.noCliente %></td>  
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.nombreCliente %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.cp %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.municipio %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.colonia %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.unidadCarga %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.statusServicio %></td>
                                                     
                                                     
                                                     <% if (adminService.statusServicio === 'PENDIENTE') { %>
@@ -253,7 +245,7 @@
                                                                       <% }); %>
                                                                     <!-- Agrega más opciones según tus necesidades -->
                                                                 </select>
-                                                                <button class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="guardarSeleccion(<%= adminService.noCliente %>)">
+                                                                <button style="width: 50px; height:50px" class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="guardarSeleccion(<%= adminService.noCliente %>)">
                                                                     <i class="zmdi zmdi-check"></i>
                                                                 </button>
                                                             </div>
@@ -277,30 +269,30 @@
                                                         <td style="font-size: 12px; border: 1px solid #333; color: white;">
                                                             <div class="table-data-feature">
                                                                 <!-- Botón para marcar entrega completada -->
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Entrega Completada" onclick="entregaCompletada(<%= adminService.noCliente %>)">
+                                                        <button style="width: 50px; height: 50px" class="item" data-toggle="tooltip" data-placement="top" title="Entrega Completada" onclick="entregaCompletada(<%= adminService.noCliente %>)">
                                                             <i class="zmdi zmdi-check"></i>
                                                         </button>
 
                                                         <!-- Botón para reagendar -->
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Reagendar" onclick="reagendar(<%= adminService.noCliente %>)">
+                                                        <button style="width: 50px; height: 50px" class="item" data-toggle="tooltip" data-placement="top" title="Reagendar" onclick="reagendar(<%= adminService.noCliente %>)">
                                                             <i class="zmdi zmdi-calendar"></i>
                                                         </button>
 
                                                         <!-- Botón para cancelar -->
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Cancelar" onclick="mostrarMotivoCancelacion(<%= adminService.noCliente %>)">
+                                                        <button style="width: 50px; height: 50px" class="item" data-toggle="tooltip" data-placement="top" title="Cancelar" onclick="mostrarMotivoCancelacion(<%= adminService.noCliente %>)">
                                                             <i class="zmdi zmdi-close"></i>
                                                         </button>
 
                                                         <!-- Select para motivo de cancelación (inicialmente oculto) -->
                                                         <select class="custom-select" id="motivoCancelacion_<%= adminService.noCliente %>" style="display: none;">
                                                             <option>SIN RESPUESTA</option>
-                                                            <option>FUERA DE HORARIO</option>
-                                                            <option>OTRO</option>
+                                                            <option>NO REQUIEREN SERVICIO</option>
+                                                            <option>OTRA</option>
                                                             <!-- Agrega más motivos según tus necesidades -->
                                                         </select>
 
                                                         <!-- Botón para confirmar cancelación (inicialmente oculto) -->
-                                                        <button class="item" id="confirmarCancelacion_<%= adminService.noCliente %>" data-toggle="tooltip" data-placement="top" title="Confirmar Cancelación" onclick="confirmarCancelacion(<%= adminService.noCliente %>)" style="display: none;">
+                                                        <button style="width: 50px; height: 50px; display:none;" class="item" id="confirmarCancelacion_<%= adminService.noCliente %>" data-toggle="tooltip" data-placement="top" title="Confirmar Cancelación" onclick="confirmarCancelacion(<%= adminService.noCliente %>)" >
                                                             <i class="zmdi zmdi-check"></i>
                                                         </button>
                                                             </div>
@@ -335,8 +327,8 @@
                                     </tbody>
                                 </table>
 
-                                <table style=" border: 1px solid black;" class="table table-data2" id="suministros">
-                                    <h3 class="title-5 m-b-35">Suministros</h3>
+                                <table style=" border: 1px solid black; padding-top:10px;" class="table table-data2" id="administracion">
+                                    <h3 class="title-5 m-b-35">Servicios Completados</h3>
                                     <thead>
                                         <tr class="titulo">
                                             
@@ -355,100 +347,23 @@
                                         <tr class="tr-shadow">
                                             <% results3.forEach((adminService)=>{ %>
                                                 <tr class="<%= 'admin' + adminService.statusServicio %>"> 
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.noCliente %>*   </td>  
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.nombreCliente %> </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.cp %>*  </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.municipio %> </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.colonia %>* </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.unidadCarga %>   </td>
-                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;">*<%= adminService.statusServicio %>*  </td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.noCliente %></td>  
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.nombreCliente %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.cp %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.municipio %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.colonia %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.unidadCarga %></td>
+                                                    <td style="font-size: 14px;border: 1px solid #333; color: black;"><%= adminService.statusServicio %></td>
                                                     
                                                     
-                                                    <% if (adminService.statusServicio === 'PENDIENTE') { %>
-                                                        <td style="font-size: 12px; border: 1px solid #333; color: white;">
-                                                            <div class="table-data-feature">
-                                                                <select class="custom-select" id="selectOption_<%= adminService.noCliente %>">
-                                                                    <option value="" disabled selected>Selecciona una opción</option>
-                                                                    <% unidades.forEach((noEco) => { %>
-                                                                        <option><%=  noEco %></option>
-                                                                      <% }); %>
-                                                                    <!-- Agrega más opciones según tus necesidades -->
-                                                                </select>
-                                                                <button class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="guardarSeleccion(<%= adminService.noCliente %>)">
-                                                                    <i class="zmdi zmdi-check"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    <% } else if (adminService.statusServicio === 'EXTRA') { %>
-                                                        <td style="font-size: 12px; border: 1px solid #333; color: white;">
-                                                            <div class="table-data-feature">
-                                                                <select class="custom-select" id="selectOption_<%= adminService.noCliente %>">
-                                                                    <option value="" disabled selected>Selecciona una opción</option>
-                                                                    <% unidades.forEach((noEco) => { %>
-                                                                        <option><%=  noEco %></option>
-                                                                      <% }); %>
-                                                                    <!-- Agrega más opciones según tus necesidades -->
-                                                                </select>
-                                                                <button class="item" data-toggle="tooltip" data-placement="top" title="Guardar" onclick="guardarSeleccion(<%= adminService.noCliente %>)">
-                                                                    <i class="zmdi zmdi-check"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    <% } else if (adminService.statusServicio === 'ASIGNADO') { %>
-                                                        <td style="font-size: 12px; border: 1px solid #333; color: white;">
-                                                            <div class="table-data-feature">
-                                                                <!-- Botón para marcar entrega completada -->
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Entrega Completada" onclick="entregaCompletada(<%= adminService.noCliente %>)">
-                                                            <i class="zmdi zmdi-check"></i>
-                                                        </button>
-
-                                                        <!-- Botón para reagendar -->
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Reagendar" onclick="reagendar(<%= adminService.noCliente %>)">
-                                                            <i class="zmdi zmdi-calendar"></i>
-                                                        </button>
-
-                                                        <!-- Botón para cancelar -->
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Cancelar" onclick="mostrarMotivoCancelacion(<%= adminService.noCliente %>)">
-                                                            <i class="zmdi zmdi-close"></i>
-                                                        </button>
-
-                                                        <!-- Select para motivo de cancelación (inicialmente oculto) -->
-                                                        <select class="custom-select" id="motivoCancelacion_<%= adminService.noCliente %>" style="display: none;">
-                                                            <option>SIN RESPUESTA</option>
-                                                            <option>NO REQUIEREN SERVICIO</option>
-                                                            <option>OTRA</option>
-                                                            <!-- Agrega más motivos según tus necesidades -->
-                                                        </select>
-
-                                                        <!-- Botón para confirmar cancelación (inicialmente oculto) -->
-                                                        <button class="item" id="confirmarCancelacion_<%= adminService.noCliente %>" data-toggle="tooltip" data-placement="top" title="Confirmar Cancelación" onclick="confirmarCancelacion(<%= adminService.noCliente %>)" style="display: none;">
-                                                            <i class="zmdi zmdi-check"></i>
-                                                        </button>
-                                                            </div>
-                                                        </td>
-                                                        
-                                                    <% } else if (adminService.statusServicio === 'COMPLETADO') { %>
+                                                    
+                                                    <% if (adminService.statusServicio === 'COMPLETADO') { %>
                                                         <td style="font-size: 12px; border: 1px solid #333; color: white;">
                                                             <div class="table-data-feature">
                                                                 <p>SERVICIO COMPLETADO</p>
                                                             </div>
                                                         </td>
-                                                    <% } else if (adminService.statusServicio === 'CANCELADO') { %>
-                                                        <td style="font-size: 14px;border: 1px solid #333; color: white;"><%= adminService.observaciones %></td>
-                                                    <% } else if (adminService.statusServicio === 'REAGENDADO') { %>
-                                                        <td style="font-size: 12px; border: 1px solid #333; color: white;">
-                                                            <div class="table-data-feature">
-                                                                <input type="DATE" id="datepicker_<%= adminService.noCliente %>" placeholder="Selecciona una fecha">
-                                                                <button class="item" data-toggle="tooltip" data-placement="top" title="Confirmar Fecha" onclick="confirmarReagendamiento(<%= adminService.noCliente %>)">
-                                                                    <i class="zmdi zmdi-check"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    <% } else if (adminService.statusServicio === 'PARCIAL') { %>
-                                                    <% } else { %>
-                                                        <!-- Agregar otras acciones según sea necesario -->
                                                     <% } %>
-                                                    
                                                     
                                                 </tr>                                   
                                              <% }) %>
@@ -473,46 +388,6 @@
     </div>
 
     <script>
-
-        function enviarPorWhatsApp() {
-            // Obtén el contenido de las tablas
-            const administracionTable = obtenerContenidoTabla('administracion', '*Administración*');
-            const suministrosTable = obtenerContenidoTabla('suministros', '*Suministros*');
-
-            const administracionTableEspacios = administracionTable.replace(/\|/g, ' ');
-            const suministrosTableEspacios = suministrosTable.replace(/\|/g, ' ');
-        
-            // Construye el mensaje en formato de texto plano
-            const mensaje = `¡Reporte de rutas!\n\n${administracionTable}\n\n\n${suministrosTable}`;
-
-        
-            // Codifica el mensaje para incluirlo en el enlace de WhatsApp
-            const mensajeCodificado = encodeURIComponent(mensaje);
-        
-            // Crea el enlace de WhatsApp
-            const link = `https://wa.me/5613350772?text=${mensajeCodificado}`;
-        
-            // Abre la ventana de WhatsApp
-            window.open(link, '_blank');
-        }
-        
-        function obtenerContenidoTabla(tableId, titulo) {
-            const table = document.getElementById(tableId);
-            const filas = table.querySelectorAll('tbody tr');
-        
-            // Crea el contenido con el formato deseado
-            const contenido = `${titulo}:\n\n${filas.length > 0 ? '' : 'Vacío\n'}`;
-        
-            const filasContenido = Array.from(filas)
-                .map(fila => Array.from(fila.children)
-                    .map(td => td.innerText.trim().replace(/\s+/g, ' ')) // Elimina espacios adicionales
-                    .join('\t'))
-                .join('\n\n');
-        
-            return `${contenido}${filasContenido}\n\n`;
-        }
-        
-        
         
         
         function mostrarMotivoCancelacion(noCliente) {
@@ -547,7 +422,7 @@
                 return
             }
 
-            $.post('/marcarCancelacion', {noCliente:noCliente, motivoSeleccionado:motivoSeleccionado}, function(data){
+            $.post('/marcarCancelacionSum', {noCliente:noCliente, motivoSeleccionado:motivoSeleccionado}, function(data){
                 if(data.success){
                     window.location.reload();
                 } else {
@@ -560,7 +435,7 @@
 
         function entregaCompletada(noCliente)
         {
-            $.post('/marcarCompletada', {noCliente:noCliente}, function(data){
+            $.post('/marcarCompletadaSum', {noCliente:noCliente}, function(data){
                 if(data.success){
                     window.location.reload();
                 } else {
@@ -571,7 +446,7 @@
 
         function reagendar(noCliente)
         {
-            $.post('/marcarReagendar', {noCliente:noCliente}, function(data){
+            $.post('/marcarReagendarSum', {noCliente:noCliente}, function(data){
                 if(data.success){
                     window.location.reload();
                 } else {
@@ -587,7 +462,7 @@
                 return
             }
 
-            $.post('/confirmaReagenda', {noCliente:noCliente, fechaReagendar:fechaReagendar}, function(data){
+            $.post('/confirmaReagendaSum', {noCliente:noCliente, fechaReagendar:fechaReagendar}, function(data){
                 if(data.success){
                     window.location.reload();
                 } else {
@@ -606,7 +481,7 @@
             }
         
             // Realizar una solicitud AJAX al servidor (Node.js) para guardar la opción en la base de datos
-            $.post('/updateAdminService', { noCliente: noCliente, selectedOption: selectedOption }, function(data) {
+            $.post('/updateSumService', { noCliente: noCliente, selectedOption: selectedOption }, function(data) {
                 if (data.success) {
                     window.location.reload();
                 } else {
@@ -623,23 +498,7 @@
             });
         });
 
-        function guardarSeleccion2(noCliente){
-            const selected = document.getElementById(`selected_${noCliente}`).value;
-
-            if(!selected){
-                alert('selecciona ruta antes de guardar');
-                return;
-            }
-
-            $.post('/updateSumService', { noCliente: noCliente, selected: selected }, function(data) {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                   window.location.reload();
-                }
-            });
-
-        }
+        
         
     </script>
     
@@ -695,11 +554,13 @@
                 const searchValue = $(_this).val().toLowerCase();
     
                 $.each($("#administracion tbody tr"), function() {
-                    
-                    const unidad = $(this).find("td:nth-child(6)").text().toLowerCase();
+                    const clienteColumn = $(this).find("td:nth-child(1)").text().toLowerCase();
+                    const nombreColumn = $(this).find("td:nth-child(2)").text().toLowerCase();
+                    const direccionColumn = $(this).find("td:nth-child(3)").text().toLowerCase();
     
-                    if (
-                        unidad.indexOf(searchValue) === -1) {
+                    if (clienteColumn.indexOf(searchValue) === -1 &&
+                        nombreColumn.indexOf(searchValue) === -1 &&
+                        direccionColumn.indexOf(searchValue) === -1) {
                         $(this).hide();
                     } else {
                         $(this).show();
@@ -707,25 +568,6 @@
                 });
             });
         });
-        $(document).ready(function(){
-            $("#search").keyup(function(){
-                _this = this;
-                const searchValue = $(_this).val().toLowerCase();
-    
-                $.each($("#suministros tbody tr"), function() {
-                    
-                    const unidad = $(this).find("td:nth-child(6)").text().toLowerCase();
-    
-                    if (
-                        unidad.indexOf(searchValue) === -1) {
-                        $(this).hide();
-                    } else {
-                        $(this).show();
-                    }
-                });
-            });
-        });
-
     </script>
 
 </body>

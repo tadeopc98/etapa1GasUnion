@@ -61,12 +61,7 @@
                                     <i class="fas fa-users"></i>
                                     <span class="bot-line"></span>Clientes</a>
                                 <ul class="header3-sub-list list-unstyled">
-                                    <li>
-                                        <a href="/clientesSuministroSupervisor">Clientes Suministro</a>
-                                    </li>
-                                    <li>
-                                        <a href="/clientesAdministracionSupervisor">Clientes Administración</a>
-                                    </li>
+                                    
                                     <li>
                                         <a href="/createClientSuministro">Registrar Cliente Suministro</a>
                                     </li>
@@ -75,6 +70,21 @@
                                     </li>
                                 </ul>
                                 
+                            </li>
+                            <li class="has-sub">
+                                <a href="#">
+                                    <i class="fas fa-inbox"></i>
+                                    <span class="bot-line"></span>Servicios</a>
+                                <ul class="header3-sub-list list-unstyled">
+                                    
+                                    <li>
+                                        <a href="/viewUnidadesServicios">Visualizar Unidades (Inicio/Cierre)</a>
+                                    </li>
+                                    <li>
+                                        <a href="/verRutas">Visualizar Rutas (Operador)</a>
+                                    </li>
+                                    
+                                </ul>
                             </li>
 
                         </ul>
@@ -148,18 +158,27 @@
                             <a class="js-arrow" href="#">
                                 <i class="fas fa-users"></i>Clientes</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
-                                <li>
-                                    <a href="/clientesSuministroSupervisor">Clientes Suministro</a>
-                                </li>
-                                <li>
-                                    <a href="/clientesAdministracionSupervisor">Clientes Administración</a>
-                                </li>
+                               
                                 <li>
                                     <a href="/createClientSuministros">Registrar Cliente Suministro</a>
                                 </li>
                                 <li>
                                     <a href="/createClientAdministracion">Registrar Cliente Administración</a>
                                 </li>
+                            </ul>
+                        </li>
+                        <li class="has-sub">
+                            <a class="js-arrow" href="#">
+                                <i class="fas fa-inbox"></i>Servicios</a>
+                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+                                
+                                <li>
+                                    <a href="/viewUnidadesServicios">Visualizar Unidades (Inicio/Cierre)</a>
+                                </li>
+                                <li>
+                                    <a href="/verRutas">Visualizar Rutas (Operador)</a>
+                                </li>
+                                
                             </ul>
                         </li>
                         
@@ -215,36 +234,50 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-6 col-lg-3">
-                            <% results2.forEach((clientes)=>{ %>
+                            <% results.forEach((suministros)=>{ %>
                             <div class="statistic__item statistic__item--green">
-                                <h2 class="number"><%= clientes.total %></h2>
-                                <span class="desc">Clientes en sistema</span>
+                                <h2 class="number"><%= suministros.totalServicios %></h2>
+                                <span class="desc">Servicios Completados</span>
                                 <div class="icon">
-                                    <i class="zmdi zmdi-account-o"></i>
+                                    <i class="zmdi zmdi-heck"></i>
                                 </div>
                             </div>
                             <% }) %>
                         </div>
+                        <% results3.forEach((suministros)=>{ %>
                         <div class="col-md-6 col-lg-3">
                             <div class="statistic__item statistic__item--orange">
-                                <h2 class="number">0</h2>
-                                <span class="desc">Servicios Por realizar</span>
+                                <h2 class="number"><%= suministros.totalServicios %></h2>
+                                <span class="desc">Servicios Asignados</span>
                                 <div class="icon">
-                                    <i class="zmdi zmdi-shopping-cart"></i>
+                                    <i class="zmdi zmdi-truck"></i>
                                 </div>
                             </div>
+                            <% }) %>
                         </div>
-                        <% results3.forEach((precioGas)=>{ %>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="statistic__item statistic__item--red">
-                                <h2 class="number">$<%= precioGas.precio %></h2>
-                                <span class="desc">Precio del gas</span>
-                                <div class="icon">
-                                    <i class="zmdi zmdi-money"></i>
+                        
+                        <% results2.forEach((suministros)=>{ %>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="statistic__item statistic__item--red">
+                                    <h2 class="number"><%= suministros.totalServicios %></h2>
+                                    <span class="desc">Servicios cancelados o reagendados</span>
+                                    <div class="icon">
+                                        <i class="zmdi zmdi-minus-square"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         <% }) %>
+                        <% results3.forEach((precioGas)=>{ %>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="statistic__item statistic__item--blue">
+                                    <h2 class="number">$ 9.02</h2>
+                                    <span class="desc">Precio del gas</span>
+                                    <div class="icon">
+                                        <i class="zmdi zmdi-money"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
                     </div>
                 </div>
             </section>
